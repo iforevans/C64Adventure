@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <c64/kernalio.h>
 
+struct LOCATION
+{
+
+};
+
 int main(void)
 {
 	char line[80];
