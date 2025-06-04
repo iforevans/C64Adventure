@@ -1,0 +1,13 @@
+{
+    "name": "C64Adventure",
+    "description": "Project C64Adventure",
+    "toolkit": "oscar64",
+    "sources": [
+        "src/main.c"
+    ],
+    "build": "debug",
+    "definitions": [],
+    "includes": [],
+    "args": [],
+    "compiler": ""
+}
