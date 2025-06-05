@@ -4,7 +4,8 @@
 struct LOCATION
 {
 	char id;
-	char desc[160];
+	char short_desc[16];
+	char long_desc[160];
 	char exits[8];
 };
 
