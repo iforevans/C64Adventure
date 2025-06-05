@@ -3,7 +3,9 @@
 
 struct LOCATION
 {
-
+	char id;
+	char desc[160];
+	char exits[8];
 };
 
 int main(void)
