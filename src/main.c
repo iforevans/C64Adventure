@@ -7,8 +7,10 @@
 #define DEVICE_NUM	8
 #define CHANNEL_NUM	2
 
-#define REC_LOC		"loc"
-#define REC_OBJ		"obj"
+#define REC_LOC_START	p"loc"
+#define REC_LOC_END		p"endloc"
+#define REC_OBJ_START	p"obj"
+#define REC_OBJ_END		p"endobj"
 
 struct LOCATION
 {
@@ -20,13 +22,13 @@ struct LOCATION
 
 int loadLocationRecord()
 {
-	printf ("Found Loc rec");
+	printf (p"Found Loc rec");
 	return 0;
 }
 
 int loadObjRecord()
 {
-	printf ("Found Obj rec");
+	printf (p"Found Obj rec");
 	return 0;
 }
 
@@ -42,18 +44,18 @@ int loadGameData(void)
 		while (krnio_gets(FILE_NUM, oneLine, sizeof(oneLine)))
 		{
 			lineCount++;
-			if (strcmp(REC_LOC, oneLine) == 0)
+			if (strcmp(oneLine, REC_LOC_START) == 0)
 			{
 				loadLocationRecord();
 			}
-			else if (strcmp(REC_OBJ, oneLine) == 0)
+			else if (strcmp(oneLine, REC_OBJ_START) == 0)
 			{
 				loadObjRecord();
 			}
 			else
 			{
 				/* We should not get here with a well formed gamedata file */
-				printf("Bad token in Gamedata file at line %d. Expected %s or %s", REC_LOC, REC_OBJ);
+				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", REC_LOC_START, REC_OBJ_START);
 				break;
 			}
 			
@@ -69,7 +71,7 @@ int loadGameData(void)
 
 int main(void)
 {
-
+	loadGameData();
 	return 0;
 }
 
