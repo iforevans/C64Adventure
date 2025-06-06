@@ -9,7 +9,6 @@
 
 #define REC_LOC		"loc"
 #define REC_OBJ		"obj"
-#define REC_END		"end"
 
 struct LOCATION
 {
@@ -51,15 +50,10 @@ int loadGameData(void)
 			{
 				loadObjRecord();
 			}
-			else if (strcmp(REC_END, oneLine) == 0)
-			{
-				/* All done */
-				break;
-			}
 			else
 			{
 				/* We should not get here with a well formed gamedata file */
-				printf("Bad token in Gamedata file at line %d. Expected %s, or %s, or %s", REC_LOC, REC_OBJ, REC_END);
+				printf("Bad token in Gamedata file at line %d. Expected %s or %s", REC_LOC, REC_OBJ);
 				break;
 			}
 			
