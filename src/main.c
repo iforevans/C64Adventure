@@ -21,17 +21,20 @@ struct LOCATION
 
 int loadLocationRecord()
 {
+	printf ("Found Loc rec");
 	return 0;
 }
 
 int loadObjRecord()
 {
+	printf ("Found Obj rec");
 	return 0;
 }
 
 int loadGameData(void)
 {
 	char oneLine[80];
+	int lineCount = 0;
 
 	// Set name for file and open it on drive 9
 	krnio_setnam("GAMEDATA,S,R");	
@@ -39,6 +42,7 @@ int loadGameData(void)
 	{
 		while (krnio_gets(FILE_NUM, oneLine, sizeof(oneLine)))
 		{
+			lineCount++;
 			if (strcmp(REC_LOC, oneLine) == 0)
 			{
 				loadLocationRecord();
@@ -49,7 +53,14 @@ int loadGameData(void)
 			}
 			else if (strcmp(REC_END, oneLine) == 0)
 			{
-				/* code */
+				/* All done */
+				break;
+			}
+			else
+			{
+				/* We should not get here with a well formed gamedata file */
+				printf("Bad token in Gamedata file at line %d. Expected %s, or %s, or %s", REC_LOC, REC_OBJ, REC_END);
+				break;
 			}
 			
 			printf("%s\n", oneLine);
