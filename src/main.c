@@ -32,6 +32,16 @@ int loadObjRecord()
 	return 0;
 }
 
+
+void stripTrailingCR(char *s) 
+{
+    size_t len = strlen(s);
+    if (len > 0 && s[len - 1] == '\r') 
+	{
+        s[len - 1] = '\0';
+    }
+}
+
 int loadGameData(void)
 {
 	char oneLine[80];
@@ -43,7 +53,11 @@ int loadGameData(void)
 	{
 		while (krnio_gets(FILE_NUM, oneLine, sizeof(oneLine)))
 		{
+			stripTrailingCR(oneLine);
 			lineCount++;
+			printf("%s\n", oneLine);
+			printf("%s\n", REC_LOC_START);
+
 			if (strcmp(oneLine, REC_LOC_START) == 0)
 			{
 				loadLocationRecord();
@@ -55,7 +69,7 @@ int loadGameData(void)
 			else
 			{
 				/* We should not get here with a well formed gamedata file */
-				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", REC_LOC_START, REC_OBJ_START);
+				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", lineCount, REC_LOC_START, REC_OBJ_START);
 				break;
 			}
 			
