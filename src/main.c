@@ -22,47 +22,43 @@ struct LOCATION
 
 int loadLocationRecord()
 {
-	printf (p"Found Loc rec");
+	printf(p"Found Loc rec");
 	return 0;
 }
 
 int loadObjRecord()
 {
-	printf (p"Found Obj rec");
+	printf(p"Found Obj rec");
 	return 0;
 }
 
-
-void stripTrailingCR(char *s) 
+void stripTrailingCR(char *line, size_t lineLen) 
 {
-    size_t len = strlen(s);
-    if (len > 0 && s[len - 1] == '\r') 
+    if (lineLen > 0 && line[lineLen - 1] == '\r') 
 	{
-        s[len - 1] = '\0';
+        line[lineLen - 1] = '\0';
     }
 }
 
 int loadGameData(void)
 {
-	char oneLine[80];
-	int lineCount = 0;
-
-	// Set name for file and open it on drive 9
+	/* Set name for file and open it on drive 9 */
 	krnio_setnam("GAMEDATA,S,R");	
 	if (krnio_open(FILE_NUM, DEVICE_NUM, CHANNEL_NUM))
 	{
-		while (krnio_gets(FILE_NUM, oneLine, sizeof(oneLine)))
-		{
-			stripTrailingCR(oneLine);
-			lineCount++;
-			printf("%s\n", oneLine);
-			printf("%s\n", REC_LOC_START);
+		char line[80];
+		int lineCount = 0;
 
-			if (strcmp(oneLine, REC_LOC_START) == 0)
+		/* Read a line from the file */
+		size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+		while (lineLen > 0)
+		{
+			stripTrailingCR(line, lineLen);
+			if (strcmp(line, REC_LOC_START) == 0)
 			{
 				loadLocationRecord();
 			}
-			else if (strcmp(oneLine, REC_OBJ_START) == 0)
+			else if (strcmp(line, REC_OBJ_START) == 0)
 			{
 				loadObjRecord();
 			}
@@ -72,6 +68,9 @@ int loadGameData(void)
 				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", lineCount, REC_LOC_START, REC_OBJ_START);
 				break;
 			}
+
+			/* Read a line from the file */
+			size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
 		}
 
 		// Close the file
