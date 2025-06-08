@@ -72,8 +72,6 @@ int loadGameData(void)
 				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", lineCount, REC_LOC_START, REC_OBJ_START);
 				break;
 			}
-			
-			printf("%s\n", oneLine);
 		}
 
 		// Close the file
