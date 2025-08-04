@@ -73,15 +73,29 @@ int loadGameData(void)
 			size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
 		}
 
-		// Close the file
+		/* Close the file */
 		krnio_close(1);
 	}
 
 	return 0;
 }
 
+void set_uppercase(void) 
+{
+    *(unsigned char *)0xD018 &= ~0x02;
+}
+
+void set_lowercase(void) 
+{
+    *(unsigned char *)0xD018 |= 0x02;
+}
+
 int main(void)
 {
+	/* Switch to the alternate character set */
+	set_lowercase();
+	printf(p"This is a test string\n");
+
 	loadGameData();
 	return 0;
 }
