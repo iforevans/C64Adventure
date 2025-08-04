@@ -7,10 +7,10 @@
 #define DEVICE_NUM	8
 #define CHANNEL_NUM	2
 
-#define REC_LOC_START	"loc"
-#define REC_LOC_END		"endloc"
-#define REC_OBJ_START	"obj"
-#define REC_OBJ_END		"endobj"
+#define REC_LOC_START	"LOC"
+#define REC_LOC_END		"ENDLOC"
+#define REC_OBJ_START	"OBJ"
+#define REC_OBJ_END		"ENDOBJ"
 
 struct LOCATION
 {
@@ -22,13 +22,13 @@ struct LOCATION
 
 int loadLocationRecord()
 {
-	printf("Found Loc rec");
+	printf(p"Found Loc rec");
 	return 0;
 }
 
 int loadObjRecord()
 {
-	printf("Found Obj rec");
+	printf(p"Found Obj rec");
 	return 0;
 }
 
