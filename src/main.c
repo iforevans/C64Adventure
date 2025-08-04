@@ -22,13 +22,13 @@ struct LOCATION
 
 int loadLocationRecord()
 {
-	printf(p"Found Loc rec");
+	printf(p"Found Loc rec\n");
 	return 0;
 }
 
 int loadObjRecord()
 {
-	printf(p"Found Obj rec");
+	printf(p"Found Obj rec\n");
 	return 0;
 }
 
