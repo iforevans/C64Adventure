@@ -11,6 +11,7 @@
 #define REC_LOC_END		"ENDLOC"
 #define REC_OBJ_START	"OBJ"
 #define REC_OBJ_END		"ENDOBJ"
+#define GAMEDATA_END	"END"
 
 struct LOCATION
 {
@@ -20,24 +21,63 @@ struct LOCATION
 	unsigned char exits[8];
 };
 
-int loadLocationRecord()
-{
-	printf(p"Found Loc rec\n");
-	return 0;
-}
-
-int loadObjRecord()
-{
-	printf(p"Found Obj rec\n");
-	return 0;
-}
-
 void stripTrailingCR(char *line, size_t lineLen) 
 {
     if (lineLen > 0 && line[lineLen - 1] == '\r') 
 	{
         line[lineLen - 1] = '\0';
     }
+}
+
+int loadLocationRecord()
+{
+	/* DEBUG Info */
+	printf(p"Found Loc rec\n");
+
+	char line[80];
+	size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+	while (lineLen > 0)
+	{
+		stripTrailingCR(line, lineLen);
+		if (strcmp(line, REC_LOC_END) == 0)
+		{
+			/* We're done*/
+			break;
+		}
+
+		/* Just print the line for now */
+		printf("%s\n", line);
+
+		/* Read the next line from the file */
+		lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+	}
+
+	return 0;
+}
+
+int loadObjRecord()
+{
+	printf(p"Found Obj rec\n");
+
+	char line[80];
+	size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+	while (lineLen > 0)
+	{
+		stripTrailingCR(line, lineLen);
+		if (strcmp(line, REC_OBJ_END) == 0)
+		{
+			/* We're done*/
+			break;
+		}
+
+		/* Just print the line for now */
+		printf("%s\n", line);
+
+		/* Read the next line from the file */
+		lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+	}
+
+	return 0;
 }
 
 int loadGameData(void)
@@ -62,6 +102,11 @@ int loadGameData(void)
 			{
 				loadObjRecord();
 			}
+			else if (strcmp(line, GAMEDATA_END) == 0)
+			{
+				/* All done */
+				break;
+			}
 			else
 			{
 				/* We should not get here with a well formed gamedata file */
@@ -70,7 +115,7 @@ int loadGameData(void)
 			}
 
 			/* Read a line from the file */
-			size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+			lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
 		}
 
 		/* Close the file */
