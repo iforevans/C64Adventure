@@ -1,11 +1,16 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
+#include <limits.h>
+#include <ctype.h>
+#include <stdbool.h>
 #include <c64/kernalio.h>
 
 /* Some useful defines */
 #define FILE_NUM	1
 #define DEVICE_NUM	8
 #define CHANNEL_NUM	2
+#define MAX_LOCS	100
 
 #define REC_LOC_START	"LOC"
 #define REC_LOC_END		"ENDLOC"
@@ -13,13 +18,14 @@
 #define REC_OBJ_END		"ENDOBJ"
 #define GAMEDATA_END	"END"
 
-struct LOCATION
+typedef struct Location
 {
 	unsigned char id;
 	char short_desc[16];
 	char long_desc[160];
 	unsigned char exits[8];
-};
+	struct Location *next;
+} Location;
 
 void stripTrailingCR(char *line, size_t lineLen) 
 {
@@ -29,13 +35,49 @@ void stripTrailingCR(char *line, size_t lineLen)
     }
 }
 
-int loadLocationRecord()
+bool parse_int(const char *s, int *out) 
+{
+	/* Base 10; skips leading space, handles +/-. */
+    char *end;
+    long v = strtol(s, &end, 10);            
+
+	/* Any digits? */
+    if (s == end) return false;
+
+	/* Iutside valid range for an int? */
+    if (v < INT_MIN || v > INT_MAX) return false;
+
+	/* Anything other than trailing whitespace is not valid */
+    while (isspace((unsigned char)*end)) end++;
+    if (*end != '\0') return false;
+
+    *out = (unsigned char)v;
+    return true;
+}
+
+
+bool loadLocationRecord()
 {
 	/* DEBUG Info */
 	printf(p"Found Loc rec\n");
 
+	/* 1st Line is the location number */
 	char line[80];
 	size_t lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
+ 	int loc_num;
+    if (!parse_int(line, &loc_num)) 
+	{
+        printf(p"Error: '%s' is not a valid int.\n", line);
+        return false;
+    }
+	else
+	{
+		printf(p"Location number (%d) found.\n", loc_num);
+	}
+	/* 2nd Line is the 'exits' line */
+	/* 3rd Line is the short desc */
+	/* 4th Line is the long desc */
+
 	while (lineLen > 0)
 	{
 		stripTrailingCR(line, lineLen);
@@ -52,10 +94,10 @@ int loadLocationRecord()
 		lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
 	}
 
-	return 0;
+	return true;
 }
 
-int loadObjRecord()
+bool loadObjRecord()
 {
 	printf(p"Found Obj rec\n");
 
@@ -77,10 +119,10 @@ int loadObjRecord()
 		lineLen = krnio_gets(FILE_NUM, line, sizeof(line));
 	}
 
-	return 0;
+	return true;
 }
 
-int loadGameData(void)
+bool loadGameData(void)
 {
 	/* Set name for file and open it on drive 9 */
 	krnio_setnam("GAMEDATA,S,R");	
@@ -111,7 +153,7 @@ int loadGameData(void)
 			{
 				/* We should not get here with a well formed gamedata file */
 				printf(p"Bad token in Gamedata file at line %d. Expected %s or %s", lineCount, REC_LOC_START, REC_OBJ_START);
-				break;
+				return false;
 			}
 
 			/* Read a line from the file */
@@ -122,7 +164,8 @@ int loadGameData(void)
 		krnio_close(1);
 	}
 
-	return 0;
+	/* all good **/
+	return true;
 }
 
 void set_uppercase(void) 
